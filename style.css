@@ -1,0 +1,97 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background:indigo;
+    
+    text-align: center;
+}
+
+header {
+    font-size:30px;
+    padding: 25px;
+    background:;
+    color:white;
+}
+
+h1 {
+    font-size: 45px;
+    color: skyblue;
+    margin-bottom: 20px;
+}
+
+.hero {
+    min-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 2s ease;
+}
+h2{
+color:yellow;
+}
+
+p {
+    font-size: 20px;
+    margin: 20px;
+}
+p {
+color:red;
+}
+img {
+width: 300px;
+max-width: 100%;
+border-radius:50px;
+margin:20px;
+}
+
+button {
+    padding: 15px 35px;
+    border: none;
+    border-radius: 30px;
+    background:skyblue;
+    color: black;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.4s;
+}
+.button2 {
+    padding: 15px 35px;
+    border: none;
+    border-radius: 30px;
+    background:skyblue;
+    color: black;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.4s;
+margin:20px;
+}
+
+
+
+button:hover {
+    transform: scale(1.15);
+    background:white;
+}
+.button2:hover {
+    transform: scale(1.15);
+    background:white;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
