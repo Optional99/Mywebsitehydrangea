@@ -91,6 +91,8 @@ p {
     border-radius: 14px;
     padding: 45px 20px;
     text-align: center;
+    column-span:all;
+    margin:30px auto;
 }
 
 
