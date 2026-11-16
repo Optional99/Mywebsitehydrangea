@@ -87,17 +87,56 @@
     projectId: "mywebsite-login-a96b4",
     appId: "1:878613000044:web:a22804c454648c9e5c8d49"
   });
+	var auth = firebase.auth();
+var $ = function (id) { return document.getElementById(id); };
 
-  var btn = document.getElementById("authBtn");
-  firebase.auth().onAuthStateChanged(function (user) {
+function msg(text, ok) {
+  $("pMsg").textContent = text;
+  $("pMsg").className = ok ? "ok" : "";
+}
+
+auth.onAuthStateChanged(function (user) {
   if (user) {
     document.body.style.display = "";
-    btn.textContent = "Log out";
-    btn.onclick = function () { firebase.auth().signOut(); };
+    var name = user.displayName || user.email;
+    $("pName").textContent = user.displayName || "(no name)";
+    $("pEmail").textContent = user.email;
+    $("profileIcon").textContent = name.charAt(0).toUpperCase();
+    $("newName").value = user.displayName || "";
   } else {
     window.location.href = "login.html";
   }
 });
+
+$("profileIcon").onclick = function () {
+  $("profileMenu").classList.toggle("open");
+};
+
+document.addEventListener("click", function (e) {
+  if (!$("profileWrap").contains(e.target)) {
+    $("profileMenu").classList.remove("open");
+  }
+});
+
+$("saveName").onclick = function () {
+  var n = $("newName").value.trim();
+  if (!n) { msg("Enter a name.", false); return; }
+  auth.currentUser.updateProfile({ displayName: n })
+    .then(function () {
+      $("pName").textContent = n;
+      $("profileIcon").textContent = n.charAt(0).toUpperCase();
+      msg("Name saved.", true);
+    })
+    .catch(function (e) { msg(e.message, false); });
+};
+
+$("resetPw").onclick = function () {
+  auth.sendPasswordResetEmail(auth.currentUser.email)
+    .then(function () { msg("Reset email sent. Check your inbox.", true); })
+    .catch(function (e) { msg(e.message, false); });
+};
+
+$("logoutBtn").onclick = function () { auth.signOut(); };
 </script>
 
 </body>
