@@ -53,8 +53,11 @@ p {
 
 /* HOMEPAGE HERO */
 .homeHero {
-    max-width: 850px;
-    margin: 50px auto 65px;
+    max-width: 1000px;
+    margin: 45px auto 65px;
+    padding:75px 25px;
+    background: #fff4ed;
+    border-radius: 22px;
 }
 
 .homeHero h1 {
