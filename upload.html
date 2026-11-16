@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Photo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Upload Your Photo</h1>
+        <a href="index.html">Home</a>
+    </header>
+
+    <main class="upload-container">
+
+        <h2>Share Your Creativity</h2>
+
+        <form id="uploadForm">
+
+            <label for="photo">Choose a photograph</label>
+
+            <input
+                type="file"
+                id="photo"
+                accept="image/jpeg,image/png,image/webp"
+                required
+            >
+
+            <label for="caption">Photo description</label>
+
+            <textarea
+                id="caption"
+                placeholder="Write something about your photo..."
+                maxlength="500"
+            ></textarea>
+
+            <button type="submit">Upload Photo</button>
+
+        </form>
+
+        <p id="message"></p>
+
+    </main>
+
+</body>
+</html>
