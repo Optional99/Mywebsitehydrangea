@@ -42,52 +42,119 @@
 }
 	</style>
 	<style>
-  #profileWrap { position: fixed; top: 12px; right: 12px; z-index: 100; }
-#profileIcon {
-  width: 44px !important; height: 44px !important; min-width: 44px !important;
-  padding: 0 !important; margin: 0 !important; border-radius: 50% !important;
-  border: 2px solid #d95b16; background: #f36b21; color: white;
-  font-size: 20px; font-weight: bold; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
+		#profileWrap {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 100;
 }
-  #profileMenu {
+
+#profileIcon {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 50% !important;
+    border: 2px solid #d95b16;
+    background: #f36b21;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#profileMenu {
     display: none;
     position: absolute;
     right: 0;
-    top: 54px;
-    width: 270px;
-    padding: 20px;
-    background: white;
+    top: 56px;
+    width: 290px;
+    max-width: calc(100vw - 24px);
+    padding: 22px;
+    box-sizing: border-box;
+    background: #ffffff;
     color: #1e293b;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #eeeeee;
     border-radius: 16px;
     text-align: left;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.14);
 }
-  #profileMenu.open { display: block; }
-  #profileMenu input { width: 100%; padding: 8px; margin: 6px 0; box-sizing: border-box; }
- #profileMenu button {
+
+#profileMenu.open {
+    display: block;
+}
+
+#pName {
+    display: block;
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#pEmail {
+    display: block;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: #777777;
+    overflow-wrap: anywhere;
+}
+
+#profileMenu hr {
+    border: none;
+    border-top: 1px solid #eeeeee;
+    margin: 16px 0;
+}
+
+#profileMenu input {
+    width: 100%;
+    padding: 12px;
+    margin: 6px 0;
+    box-sizing: border-box;
+    border: 1px solid #dddddd;
+    border-radius: 9px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    outline: none;
+}
+
+#profileMenu input:focus {
+    border-color: #ff6719;
+}
+
+#profileMenu button {
     width: 100%;
     margin-top: 10px;
     padding: 12px;
     border: none;
-    border-radius: 25px;
-    background: #2563eb;
+    border-radius: 9px;
+    background: #ff6719;
     color: white;
     font-family: Arial, sans-serif;
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.2s;
 }
 
 #profileMenu button:hover {
-    background: #1d4ed8;
-    transform: translateY(-2px);
+    background: #e6530d;
 }
-  #pMsg { font-size: 13px; color: #b3261e; }
-  #pMsg.ok { color: #1b6e3a; }
-</style>
+
+#pMsg {
+    font-size: 13px;
+    color: #b3261e;
+    overflow-wrap: anywhere;
+}
+
+#pMsg.ok {
+    color: #1b6e3a;
+}
+   </style>
 
 <div id="profileWrap">
   <button id="profileIcon" type="button">?</button>
