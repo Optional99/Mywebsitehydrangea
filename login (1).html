@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - My Professional Website</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    font-family: Georgia, "Times New Roman", serif;
+    background: #e8ecf8; color: #2a2f4a;
+  }
+  .card {
+    width: 100%; max-width: 380px; margin: 16px; padding: 28px;
+    background: #ffffff; border: 2px solid #7b86c9; border-radius: 6px;
+  }
+  h1 { margin: 0 0 18px; font-size: 24px; }
+  .tabs { display: flex; margin-bottom: 18px; border-bottom: 2px solid #c9cfee; }
+  .tabs button {
+    flex: 1; padding: 10px; border: 0; background: none; cursor: pointer;
+    font: inherit; color: #6b719a;
+  }
+  .tabs button.active { color: #2a2f4a; border-bottom: 3px solid #5b4fb5; margin-bottom: -2px; font-weight: bold; }
+  label { display: block; margin: 12px 0 4px; font-size: 14px; }
+  input {
+    width: 100%; padding: 10px; font: inherit; border: 1px solid #9aa3d6; border-radius: 4px;
+  }
+  input:focus, button:focus { outline: 3px solid #b9aef0; }
+  .submit {
+    width: 100%; margin-top: 18px; padding: 11px; border: 0; border-radius: 4px;
+    background: #5b4fb5; color: #fff; font: inherit; cursor: pointer;
+  }
+  .submit:hover { background: #4a3f9c; }
+  .google { background: #ffffff; color: #2a2f4a; border: 1px solid #9aa3d6; margin-top: 10px; }
+  .google:hover { background: #f1f3fb; }
+  #message { margin-top: 14px; min-height: 20px; font-size: 14px; color: #b3261e; }
+  #message.ok { color: #1b6e3a; }
+  .hidden { display: none; }
+  a { color: #5b4fb5; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <!-- Logged-out view -->
+  <div id="authView">
+    <h1>My Website</h1>
+    <div class="tabs">
+      <button id="tabLogin" class="active" type="button">Log in</button>
+      <button id="tabSignup" type="button">Create profile</button>
+    </div>
+
+    <div id="nameRow" class="hidden">
+      <label for="name">Your name</label>
+      <input id="name" type="text" autocomplete="name">
+    </div>
+
+    <label for="email">Email</label>
+    <input id="email" type="email" autocomplete="email">
+
+    <label for="password">Password (6+ characters)</label>
+    <input id="password" type="password" autocomplete="current-password">
+
+    <button id="submitBtn" class="submit" type="button">Log in</button>
+    <button id="googleBtn" class="submit google" type="button">Continue with Google</button>
+  </div>
+
+  <div id="message"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+  // PASTE YOUR FIREBASE CONFIG HERE (Firebase console > Project settings > Your apps)
+  var firebaseConfig = {
+    apiKey: "AIzaSyAa6E8a49uTBczltRTctodaViIh3bz73Fc",
+    authDomain: "mywebsite-login-a96b4.firebaseapp.com",
+    projectId: "mywebsite-login-a96b4",
+    appId: "1:878613000044:web:a22804c454648c9e5c8d49"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  var auth = firebase.auth();
+
+  var mode = "login";
+  var signingUp = false;
+  var $ = function (id) { return document.getElementById(id); };
+
+  function setMode(m) {
+    mode = m;
+    $("tabLogin").className = m === "login" ? "active" : "";
+    $("tabSignup").className = m === "signup" ? "active" : "";
+    $("nameRow").className = m === "signup" ? "" : "hidden";
+    $("submitBtn").textContent = m === "signup" ? "Create profile" : "Log in";
+    showMessage("", false);
+  }
+
+  function showMessage(text, ok) {
+    $("message").textContent = text;
+    $("message").className = ok ? "ok" : "";
+  }
+
+  $("tabLogin").onclick = function () { setMode("login"); };
+  $("tabSignup").onclick = function () { setMode("signup"); };
+
+  $("submitBtn").onclick = function () {
+    var email = $("email").value.trim();
+    var password = $("password").value;
+    var name = $("name").value.trim();
+
+    if (!email || !password) { showMessage("Enter email and password.", false); return; }
+
+    if (mode === "signup") {
+      if (!name) { showMessage("Enter your name.", false); return; }
+      signingUp = true;
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(function (cred) { return cred.user.updateProfile({ displayName: name }); })
+        .then(function () { window.location.href = "index.html"; })
+        .catch(function (e) { signingUp = false; showMessage(e.message, false); });
+    } else {
+      auth.signInWithEmailAndPassword(email, password)
+        .catch(function (e) { showMessage(e.message, false); });
+    }
+  };
+
+  $("googleBtn").onclick = function () {
+    var provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(function (e) { showMessage(e.message, false); });
+  };
+
+  auth.onAuthStateChanged(function (user) {
+    if (user && !signingUp) {
+      window.location.href = "index.html";
+    }
+  });
+</script>
+</body>
+</html>
