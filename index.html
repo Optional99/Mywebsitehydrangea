@@ -58,14 +58,14 @@
 
   var btn = document.getElementById("authBtn");
   firebase.auth().onAuthStateChanged(function (user) {
-    if (user) {
-      btn.textContent = "Log out";
-      btn.onclick = function () { firebase.auth().signOut(); };
-    } else {
-      btn.textContent = "Login";
-      btn.onclick = function () { window.location.href = "login.html"; };
-    }
-  });
+  if (user) {
+    document.body.style.display = "";
+    btn.textContent = "Log out";
+    btn.onclick = function () { firebase.auth().signOut(); };
+  } else {
+    window.location.href = "login.html";
+  }
+});
 </script>
 
 </body>
