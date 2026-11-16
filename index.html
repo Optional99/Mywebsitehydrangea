@@ -174,28 +174,44 @@
 		class="uploadlink">
 		+ Upload Photo
 	</a>
-    <section class="hero">
+    
+<main>
 
-        <h1>Welcome to My Website!</h1>
-        <h1>this is a website created for learning purpose</h1>
-        
+    <section class="homeHero">
+        <h1>Share Your World.</h1>
 
-        <h2>The below is hydrangea flower</h2>
-	
-        <img src="flower.jpg" alt="flower image">
+        <p>
+            A place to discover, share and appreciate
+            photography from people around the world.
+        </p>
 
-        <p>Explore my creative world.</p>
-
-
-        <button onclick="exploreWebsite()">
-            Explore Now
-        </button>
-
-        <button class="button2"
-          onclick="nowclick()">
-           Click Now </button> 
-
+        <a href="upload.html" class="uploadlink">
+            + Upload Photo
+        </a>
     </section>
+
+    <section class="gallerySection">
+        <h2>Explore Photography</h2>
+
+        <p>Discover photographs shared by our community.</p>
+
+        <div class="galleryGrid" id="galleryGrid">
+
+            <div class="photoCard">
+                <div class="photoPlaceholder">
+                    Photos will appear here
+                </div>
+                <div class="photoInfo">
+                    <h3>Community Gallery</h3>
+                    <p>Approved photographs will appear here.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+	
 
     <script src="script.js"></script>
 
