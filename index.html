@@ -15,6 +15,39 @@
 </head>
 
 <body style="display:none">
+	<style>
+  #profileWrap { position: fixed; top: 12px; right: 12px; z-index: 100; }
+  #profileIcon {
+    width: 44px; height: 44px; border-radius: 50%; border: 2px solid #fff;
+    background: #87ceeb; color: #000; font-size: 20px; font-weight: bold; cursor: pointer;
+  }
+  #profileMenu {
+    display: none; position: absolute; right: 0; top: 54px; width: 250px;
+    padding: 14px; background: #fff; color: #222; border-radius: 8px; text-align: left;
+  }
+  #profileMenu.open { display: block; }
+  #profileMenu input { width: 100%; padding: 8px; margin: 6px 0; box-sizing: border-box; }
+  #profileMenu button {
+    width: 100%; margin-top: 6px; padding: 9px; border: 0; border-radius: 6px;
+    background: #87ceeb; cursor: pointer;
+  }
+  #pMsg { font-size: 13px; color: #b3261e; }
+  #pMsg.ok { color: #1b6e3a; }
+</style>
+
+<div id="profileWrap">
+  <button id="profileIcon" type="button">?</button>
+  <div id="profileMenu">
+    <strong id="pName"></strong><br>
+    <span id="pEmail"></span>
+    <hr>
+    <input id="newName" type="text" placeholder="Change name">
+    <button id="saveName" type="button">Save name</button>
+    <button id="resetPw" type="button">Send password reset email</button>
+    <button id="logoutBtn" type="button">Log out</button>
+    <p id="pMsg"></p>
+  </div>
+</div>
 
     <header>
         <h>MY WEBSITE</h>
@@ -44,7 +77,6 @@
     </section>
 
     <script src="script.js"></script>
-	<button id="authBtn" type="button">Login</button>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
