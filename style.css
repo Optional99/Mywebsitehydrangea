@@ -95,3 +95,23 @@ button:hover {
         transform: translateY(0);
     }
 }
+.uploadLink {
+    position: fixed;
+    top: 15px;
+    right: 75px;
+    background: #2563eb;
+    color: white;
+    padding: 12px 22px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    z-index: 99;
+    transition: 0.3s;
+}
+
+.uploadLink:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
