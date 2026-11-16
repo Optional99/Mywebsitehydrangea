@@ -44,6 +44,29 @@
     </section>
 
     <script src="script.js"></script>]
+	<button id="authBtn" type="button">Login</button>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey: "AIzaSyAa6E8a49uTBczltRTctodaViIh3bz73Fc",
+    authDomain: "mywebsite-login-a96b4.firebaseapp.com",
+    projectId: "mywebsite-login-a96b4",
+    appId: "1:878613000044:web:a22804c454648c9e5c8d49"
+  });
+
+  var btn = document.getElementById("authBtn");
+  firebase.auth().onAuthStateChanged(function (user) {
+    if (user) {
+      btn.textContent = "Log out";
+      btn.onclick = function () { firebase.auth().signOut(); };
+    } else {
+      btn.textContent = "Login";
+      btn.onclick = function () { window.location.href = "login.html"; };
+    }
+  });
+</script>
 
 </body>
 
