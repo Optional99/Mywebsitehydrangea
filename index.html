@@ -35,15 +35,40 @@
   display: flex; align-items: center; justify-content: center;
 }
   #profileMenu {
-    display: none; position: absolute; right: 0; top: 54px; width: 250px;
-    padding: 14px; background: #fff; color: #222; border-radius: 8px; text-align: left;
-  }
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 54px;
+    width: 270px;
+    padding: 20px;
+    background: white;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    text-align: left;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
   #profileMenu.open { display: block; }
   #profileMenu input { width: 100%; padding: 8px; margin: 6px 0; box-sizing: border-box; }
-  #profileMenu button {
-    width: 100%; margin-top: 6px; padding: 9px; border: 0; border-radius: 6px;
-    background: #87ceeb; cursor: pointer;
-  }
+ #profileMenu button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    border: none;
+    border-radius: 25px;
+    background: #2563eb;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#profileMenu button:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
   #pMsg { font-size: 13px; color: #b3261e; }
   #pMsg.ok { color: #1b6e3a; }
 </style>
