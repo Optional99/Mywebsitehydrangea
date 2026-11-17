@@ -211,7 +211,27 @@
 </main>
 	
 
-    <script src="script.js"></script>
+    <div id="photoModal" class="pmOverlay">
+  <div class="pmBox">
+    <button id="pmClose" type="button" class="pmCloseBtn" aria-label="Close">&times;</button>
+    <div class="pmImgWrap"><img id="pmImg" alt=""></div>
+    <div class="pmSide">
+      <p id="pmDesc" class="pmDesc"></p>
+      <p id="pmBy" class="pmBy"></p>
+      <button id="pmLike" type="button"><span id="pmLikeIcon">&#9825;</span> <span id="pmLikeCount">0</span></button>
+      <div class="pmRate"><span id="pmStars"></span><small id="pmAvg"></small></div>
+      <h4>Comments</h4>
+      <div id="pmComments"></div>
+      <div class="pmCommentForm">
+        <input id="pmCommentInput" type="text" maxlength="300" placeholder="Add a comment...">
+        <button id="pmCommentSend" type="button">Post</button>
+      </div>
+      <p id="pmMsg"></p>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -278,7 +298,31 @@ $("resetPw").onclick = function () {
 };
 
 $("logoutBtn").onclick = function () { auth.signOut(); };
-	function loadGallery() {
+	var photosData = {};
+var statEls = {};
+var currentId = null;
+var unsubComments = null;
+var myRating = 0;
+var iLiked = false;
+
+function avgOf(d) { return d.ratingCount ? d.ratingSum / d.ratingCount : 0; }
+
+function statText(d) {
+  var a = avgOf(d);
+  return "\u2665 " + (d.likesCount || 0) + "    \u2605 " + (a ? a.toFixed(1) : "-");
+}
+
+function refreshStats(id) {
+  var d = photosData[id];
+  if (statEls[id]) { statEls[id].textContent = statText(d); }
+  if (id === currentId) {
+    $("pmLikeCount").textContent = d.likesCount || 0;
+    var a = avgOf(d);
+    $("pmAvg").textContent = a ? a.toFixed(1) + " average (" + d.ratingCount + ")" : "No ratings yet";
+  }
+}
+
+function loadGallery() {
   db.collection("photos").where("status", "==", "approved").limit(50).get()
     .then(function (snap) {
       if (snap.empty) { return; }
@@ -287,9 +331,12 @@ $("logoutBtn").onclick = function () { auth.signOut(); };
       snap.forEach(function (doc) {
         var d = doc.data();
         if (!d.imageUrl) { return; }
+        photosData[doc.id] = d;
 
         var card = document.createElement("div");
-        card.style.cssText = "background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.12); overflow:hidden;";
+        card.className = "photoCard";
+        card.style.cssText = "background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.12); overflow:hidden; cursor:pointer;";
+        card.onclick = function () { openPhoto(doc.id); };
 
         var img = document.createElement("img");
         img.src = d.imageUrl;
@@ -298,17 +345,216 @@ $("logoutBtn").onclick = function () { auth.signOut(); };
         card.appendChild(img);
 
         var info = document.createElement("div");
-        info.style.cssText = "padding:12px; font-family:Arial,sans-serif; font-size:14px;";
+        info.style.cssText = "padding:12px 12px 4px; font-family:Arial,sans-serif; font-size:14px;";
         info.textContent = (d.description || "") + (d.uploaderName ? " (by " + d.uploaderName + ")" : "");
         card.appendChild(info);
+
+        var stats = document.createElement("div");
+        stats.style.cssText = "padding:0 12px 12px; font-family:Arial,sans-serif; font-size:13px; color:#777;";
+        statEls[doc.id] = stats;
+        card.appendChild(stats);
+        stats.textContent = statText(d);
 
         grid.appendChild(card);
       });
     })
     .catch(function (e) { console.log(e.message); });
 }
+
+/* ---------- Photo popup: like, rate, comment ---------- */
+
+function pmMsg(text) { $("pmMsg").textContent = text || ""; }
+
+function paintStars(n) {
+  var stars = $("pmStars").children;
+  for (var i = 0; i < stars.length; i++) {
+    stars[i].className = "pmStar" + (i < n ? " on" : "");
+  }
+}
+
+function paintLike() {
+  $("pmLike").className = iLiked ? "liked" : "";
+  $("pmLikeIcon").textContent = iLiked ? "\u2665" : "\u2661";
+}
+
+function buildStars() {
+  var box = $("pmStars");
+  box.innerHTML = "";
+  for (var i = 1; i <= 5; i++) {
+    (function (n) {
+      var s = document.createElement("span");
+      s.textContent = "\u2605";
+      s.className = "pmStar";
+      s.onmouseenter = function () { paintStars(n); };
+      s.onmouseleave = function () { paintStars(myRating); };
+      s.onclick = function () { ratePhoto(n); };
+      box.appendChild(s);
+    })(i);
+  }
+}
+
+function openPhoto(id) {
+  var d = photosData[id];
+  var user = auth.currentUser;
+  if (!d || !user) { return; }
+  currentId = id;
+  myRating = 0;
+  iLiked = false;
+
+  $("pmImg").src = d.imageUrl;
+  $("pmDesc").textContent = d.description || "";
+  $("pmBy").textContent = d.uploaderName ? "by " + d.uploaderName : "";
+  $("pmCommentInput").value = "";
+  pmMsg("");
+  buildStars();
+  paintLike();
+  refreshStats(id);
+  $("photoModal").classList.add("open");
+  document.body.style.overflow = "hidden";
+
+  var photoRef = db.collection("photos").doc(id);
+
+  photoRef.collection("likes").doc(user.uid).get()
+    .then(function (s) { if (id === currentId) { iLiked = s.exists; paintLike(); } })
+    .catch(function (e) { pmMsg(e.message); });
+
+  photoRef.collection("ratings").doc(user.uid).get()
+    .then(function (s) {
+      if (id === currentId && s.exists) { myRating = s.data().value || 0; paintStars(myRating); }
+    })
+    .catch(function (e) { pmMsg(e.message); });
+
+  if (unsubComments) { unsubComments(); }
+  unsubComments = photoRef.collection("comments").orderBy("createdAt").limit(100)
+    .onSnapshot(function (snap) {
+      var list = $("pmComments");
+      list.innerHTML = "";
+      if (snap.empty) {
+        var none = document.createElement("p");
+        none.className = "pmNone";
+        none.textContent = "No comments yet. Be the first!";
+        list.appendChild(none);
+        return;
+      }
+      snap.forEach(function (c) {
+        var cd = c.data();
+        var row = document.createElement("div");
+        row.className = "pmComment";
+        var who = document.createElement("strong");
+        who.textContent = cd.name || "Anonymous";
+        var txt = document.createElement("span");
+        txt.textContent = " " + cd.text;
+        row.appendChild(who);
+        row.appendChild(txt);
+        var me = auth.currentUser;
+        if (me && (cd.uid === me.uid || me.uid === "ONrTBmCnXXOCXANkCQIkkL3h66z1")) {
+          var del = document.createElement("button");
+          del.type = "button";
+          del.className = "pmDel";
+          del.textContent = "Delete";
+          del.onclick = function () {
+            if (!confirm("Delete this comment?")) { return; }
+            photoRef.collection("comments").doc(c.id).delete()
+              .catch(function (e) { pmMsg(e.message); });
+          };
+          row.appendChild(del);
+        }
+        list.appendChild(row);
+      });
+      list.scrollTop = list.scrollHeight;
+    }, function (e) { pmMsg(e.message); });
+}
+
+function closePhoto() {
+  $("photoModal").classList.remove("open");
+  document.body.style.overflow = "";
+  if (unsubComments) { unsubComments(); unsubComments = null; }
+  currentId = null;
+}
+
+function toggleLike() {
+  var user = auth.currentUser;
+  var id = currentId;
+  if (!user || !id) { return; }
+  var photoRef = db.collection("photos").doc(id);
+  var likeRef = photoRef.collection("likes").doc(user.uid);
+  pmMsg("");
+
+  db.runTransaction(function (t) {
+    return t.get(likeRef).then(function (likeDoc) {
+      return t.get(photoRef).then(function (pDoc) {
+        var count = pDoc.data().likesCount || 0;
+        if (likeDoc.exists) {
+          t.delete(likeRef);
+          t.update(photoRef, { likesCount: Math.max(0, count - 1) });
+          return { liked: false, count: Math.max(0, count - 1) };
+        }
+        t.set(likeRef, { createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        t.update(photoRef, { likesCount: count + 1 });
+        return { liked: true, count: count + 1 };
+      });
+    });
+  }).then(function (r) {
+    photosData[id].likesCount = r.count;
+    if (id === currentId) { iLiked = r.liked; paintLike(); }
+    refreshStats(id);
+  }).catch(function (e) { pmMsg(e.message); });
+}
+
+function ratePhoto(n) {
+  var user = auth.currentUser;
+  var id = currentId;
+  if (!user || !id) { return; }
+  var photoRef = db.collection("photos").doc(id);
+  var ratingRef = photoRef.collection("ratings").doc(user.uid);
+  pmMsg("");
+
+  db.runTransaction(function (t) {
+    return t.get(ratingRef).then(function (rDoc) {
+      return t.get(photoRef).then(function (pDoc) {
+        var p = pDoc.data();
+        var old = rDoc.exists ? rDoc.data().value : 0;
+        var sum = (p.ratingSum || 0) - old + n;
+        var cnt = (p.ratingCount || 0) + (rDoc.exists ? 0 : 1);
+        t.set(ratingRef, { value: n, uid: user.uid });
+        t.update(photoRef, { ratingSum: sum, ratingCount: cnt, averageRating: sum / cnt });
+        return { sum: sum, cnt: cnt };
+      });
+    });
+  }).then(function (r) {
+    photosData[id].ratingSum = r.sum;
+    photosData[id].ratingCount = r.cnt;
+    if (id === currentId) { myRating = n; paintStars(n); }
+    refreshStats(id);
+  }).catch(function (e) { pmMsg(e.message); });
+}
+
+function postComment() {
+  var user = auth.currentUser;
+  var id = currentId;
+  var text = $("pmCommentInput").value.trim();
+  if (!user || !id) { return; }
+  if (!text) { pmMsg("Write a comment first."); return; }
+  pmMsg("");
+  db.collection("photos").doc(id).collection("comments").add({
+    text: text,
+    uid: user.uid,
+    name: user.displayName || "Anonymous",
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function () {
+    $("pmCommentInput").value = "";
+  }).catch(function (e) { pmMsg(e.message); });
+}
+
+$("pmClose").onclick = closePhoto;
+$("pmLike").onclick = toggleLike;
+$("pmCommentSend").onclick = postComment;
+$("pmCommentInput").onkeydown = function (e) { if (e.key === "Enter") { postComment(); } };
+$("photoModal").onclick = function (e) { if (e.target === this) { closePhoto(); } };
+document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closePhoto(); } });
 </script>
 
 </body>
 
 </html>
+
