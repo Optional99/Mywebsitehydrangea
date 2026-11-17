@@ -46,4 +46,49 @@
     </main>
 
 </body>
+    <script>
+const CLOUD_NAME = "mx1cjiyc";
+const UPLOAD_PRESET = "optional_uploads";
+const MAX_SIZE = 10 * 1024 * 1024;
+
+document.getElementById("uploadForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  const message = document.getElementById("message");
+  const file = document.getElementById("photo").files[0];
+
+  if (!file) {
+    message.textContent = "Please choose a photo.";
+    return;
+  }
+  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+    message.textContent = "Only JPG, PNG or WEBP images are allowed.";
+    return;
+  }
+  if (file.size > MAX_SIZE) {
+    message.textContent = "Photo must be smaller than 10 MB.";
+    return;
+  }
+
+  message.textContent = "Uploading...";
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", UPLOAD_PRESET);
+
+  try {
+    const res = await fetch("https://api.cloudinary.com/v1_1/" + CLOUD_NAME + "/image/upload", {
+      method: "POST",
+      body: formData
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error ? data.error.message : "Upload failed");
+    }
+    message.textContent = "Upload successful!";
+    console.log(data.secure_url);
+  } catch (err) {
+    message.textContent = "Error: " + err.message;
+  }
+});
+    </script>
 </html>
