@@ -44,23 +44,48 @@
         <p id="message"></p>
 
     </main>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+var firebaseConfig = {
+  apiKey: "AIzaSyAa6E8a49uTBczltRTctodaViIh3bz73Fc",
+  authDomain: "mywebsite-login-a96b4.firebaseapp.com",
+  projectId: "mywebsite-login-a96b4",
+  appId: "1:878613000044:web:a22804c454648c9e5c8d49"
+};
+firebase.initializeApp(firebaseConfig);
+var auth = firebase.auth();
+var db = firebase.firestore();
 
-</body>
-    <script>
-const CLOUD_NAME = "mx1cjiyc";
-const UPLOAD_PRESET = "optional_uploads";
-const MAX_SIZE = 10 * 1024 * 1024;
+var CLOUD_NAME = "mx1cjiyc";
+var UPLOAD_PRESET = "optional_uploads";
+var MAX_SIZE = 10 * 1024 * 1024;
+var currentUser = null;
+
+auth.onAuthStateChanged(function (user) {
+  if (!user) {
+    window.location.href = "login.html";
+  } else {
+    currentUser = user;
+  }
+});
 
 document.getElementById("uploadForm").addEventListener("submit", async function (e) {
   e.preventDefault();
-  const message = document.getElementById("message");
-  const file = document.getElementById("photo").files[0];
+  var message = document.getElementById("message");
+  var file = document.getElementById("photo").files[0];
+  var caption = document.getElementById("caption").value.trim();
 
+  if (!currentUser) {
+    message.textContent = "Please log in first.";
+    return;
+  }
   if (!file) {
     message.textContent = "Please choose a photo.";
     return;
   }
-  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+  if (["image/jpeg", "image/png", "image/webp"].indexOf(file.type) === -1) {
     message.textContent = "Only JPG, PNG or WEBP images are allowed.";
     return;
   }
@@ -71,24 +96,39 @@ document.getElementById("uploadForm").addEventListener("submit", async function 
 
   message.textContent = "Uploading...";
 
-  const formData = new FormData();
+  var formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", UPLOAD_PRESET);
 
   try {
-    const res = await fetch("https://api.cloudinary.com/v1_1/" + CLOUD_NAME + "/image/upload", {
+    var res = await fetch("https://api.cloudinary.com/v1_1/" + CLOUD_NAME + "/image/upload", {
       method: "POST",
       body: formData
     });
-    const data = await res.json();
+    var data = await res.json();
     if (!res.ok) {
       throw new Error(data.error ? data.error.message : "Upload failed");
     }
-    message.textContent = "Upload successful!";
-    console.log(data.secure_url);
+
+    await db.collection("photos").add({
+      imageUrl: data.secure_url,
+      description: caption,
+      uploadedBy: currentUser.uid,
+      uploaderName: currentUser.displayName || "Anonymous",
+      status: "pending",
+      averageRating: 0,
+      likesCount: 0,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    message.textContent = "Upload successful! Your photo is waiting for admin approval.";
+    document.getElementById("uploadForm").reset();
   } catch (err) {
     message.textContent = "Error: " + err.message;
   }
 });
-    </script>
+          </script>
+
+</body>
+
 </html>
