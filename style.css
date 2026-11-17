@@ -224,4 +224,49 @@ textarea {
 }
 
 .pmDel { margin-left: 8px; padding: 0; border: none; background: none; color: #b3261e; font-size: 12px; cursor: pointer; text-decoration: underline; }
+/* ---------- Mobile fixes ---------- */
+@media (max-width: 600px) {
+  body {
+    padding: 70px 14px 30px;
+  }
+
+  #siteLogo {
+    top: 10px !important;
+    left: 10px !important;
+    height: 40px !important;
+    padding: 0 12px !important;
+    font-size: 17px !important;
+  }
+
+  #profileWrap {
+    top: 10px !important;
+    right: 10px !important;
+  }
+
+  #profileIcon {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    font-size: 18px !important;
+  }
+
+  .uploadlink {
+    top: 10px;
+    right: 60px;
+    height: 40px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+  }
+
+  .homeHero {
+    margin: 20px auto 40px;
+    padding: 40px 18px;
+  }
+
+  .homeHero h1 {
+    font-size: 30px;
+  }
+}
 
