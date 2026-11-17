@@ -187,3 +187,41 @@ textarea {
         padding: 20px;
     }
 }
+
+/* ---------- Photo popup ---------- */
+.photoCard { transition: transform 0.15s, box-shadow 0.15s; }
+.photoCard:hover { transform: translateY(-3px); }
+
+.pmOverlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.75); align-items: center; justify-content: center; padding: 16px; box-sizing: border-box; }
+.pmOverlay.open { display: flex; }
+.pmBox { position: relative; display: flex; width: 100%; max-width: 1000px; max-height: 90vh; background: #fff; border-radius: 16px; overflow: hidden; font-family: Arial, sans-serif; color: #1e293b; text-align: left; }
+.pmImgWrap { flex: 1.4; min-width: 0; background: #111; display: flex; align-items: center; justify-content: center; }
+.pmImgWrap img { max-width: 100%; max-height: 90vh; object-fit: contain; display: block; }
+.pmSide { flex: 1; min-width: 260px; padding: 20px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; }
+.pmCloseBtn { position: absolute; top: 8px; right: 12px; z-index: 5; width: 34px; height: 34px; border: none; border-radius: 50%; background: rgba(255,255,255,0.9); font-size: 22px; line-height: 1; cursor: pointer; }
+.pmDesc { margin: 0 0 4px; font-size: 16px; font-weight: bold; overflow-wrap: anywhere; padding-right: 30px; }
+.pmBy { margin: 0 0 14px; font-size: 13px; color: #777; }
+#pmLike { align-self: flex-start; padding: 8px 16px; border: 2px solid #ff6719; border-radius: 20px; background: #fff; color: #ff6719; font-size: 16px; font-weight: bold; cursor: pointer; }
+#pmLike.liked { background: #ff6719; color: #fff; }
+.pmRate { margin: 12px 0; display: flex; align-items: center; gap: 10px; }
+.pmStar { font-size: 28px; color: #ccc; cursor: pointer; user-select: none; }
+.pmStar.on { color: #f5a623; }
+.pmRate small { color: #777; font-size: 12px; }
+.pmSide h4 { margin: 8px 0; }
+#pmComments { flex: 1; min-height: 80px; overflow-y: auto; border-top: 1px solid #eee; padding-top: 8px; }
+.pmComment { margin-bottom: 8px; font-size: 14px; overflow-wrap: anywhere; }
+.pmNone { color: #999; font-size: 13px; }
+.pmCommentForm { display: flex; gap: 8px; margin-top: 10px; }
+.pmCommentForm input { flex: 1; min-width: 0; padding: 10px; border: 1px solid #ddd; border-radius: 9px; font-size: 14px; }
+.pmCommentForm button { padding: 10px 16px; border: none; border-radius: 9px; background: #ff6719; color: #fff; font-weight: bold; cursor: pointer; }
+#pmMsg { margin: 6px 0 0; font-size: 12px; color: #b3261e; overflow-wrap: anywhere; }
+
+@media (max-width: 700px) {
+  .pmBox { flex-direction: column; overflow-y: auto; }
+  .pmImgWrap img { max-height: 40vh; }
+  .pmSide { overflow: visible; }
+  #pmComments { max-height: 180px; flex: none; }
+}
+
+.pmDel { margin-left: 8px; padding: 0; border: none; background: none; color: #b3261e; font-size: 12px; cursor: pointer; text-decoration: underline; }
+
