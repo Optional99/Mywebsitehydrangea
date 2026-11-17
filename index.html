@@ -240,6 +240,10 @@ auth.onAuthStateChanged(function (user) {
     $("pEmail").textContent = user.email;
     $("profileIcon").textContent = name.charAt(0).toUpperCase();
     $("newName").value = user.displayName || "";
+	  if (user.uid === "ONrTBmCnXXOCXANkCQIkkL3h66z1") {
+      $("adminLink").style.display = "block";
+    }
+    loadGallery();
   } else {
     window.location.href = "login.html";
   }
@@ -274,6 +278,35 @@ $("resetPw").onclick = function () {
 };
 
 $("logoutBtn").onclick = function () { auth.signOut(); };
+	function loadGallery() {
+  db.collection("photos").where("status", "==", "approved").limit(50).get()
+    .then(function (snap) {
+      if (snap.empty) { return; }
+      var grid = $("galleryGrid");
+      grid.innerHTML = "";
+      snap.forEach(function (doc) {
+        var d = doc.data();
+        if (!d.imageUrl) { return; }
+
+        var card = document.createElement("div");
+        card.style.cssText = "background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.12); overflow:hidden;";
+
+        var img = document.createElement("img");
+        img.src = d.imageUrl;
+        img.alt = d.description || "Photo";
+        img.style.cssText = "width:100%; display:block;";
+        card.appendChild(img);
+
+        var info = document.createElement("div");
+        info.style.cssText = "padding:12px; font-family:Arial,sans-serif; font-size:14px;";
+        info.textContent = (d.description || "") + (d.uploaderName ? " (by " + d.uploaderName + ")" : "");
+        card.appendChild(info);
+
+        grid.appendChild(card);
+      });
+    })
+    .catch(function (e) { console.log(e.message); });
+}
 </script>
 
 </body>
