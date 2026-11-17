@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Approve Photos</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
+  h1 { color: #ff6719; }
+  a { color: #ff6719; }
+  .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); padding: 16px; margin: 16px 0; max-width: 500px; }
+  .card img { max-width: 100%; border-radius: 8px; }
+  .card p { margin: 8px 0; }
+  button { border: 0; border-radius: 8px; padding: 10px 18px; color: #fff; cursor: pointer; font-size: 15px; margin-right: 8px; }
+  .approve { background: #ff6719; }
+  .reject { background: #888; }
+  #status { color: #b3261e; }
+</style>
+</head>
+<body>
+
+<h1>Pending Photos</h1>
+<p><a href="index.html">Home</a></p>
+<p id="status">Loading...</p>
+<div id="list"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+var firebaseConfig = {
+  apiKey: "AIzaSyAa6E8a49uTBczltRTctodaViIh3bz73Fc",
+  authDomain: "mywebsite-login-a96b4.firebaseapp.com",
+  projectId: "mywebsite-login-a96b4",
+  appId: "1:878613000044:web:a22804c454648c9e5c8d49"
+};
+firebase.initializeApp(firebaseConfig);
+var auth = firebase.auth();
+var db = firebase.firestore();
+
+var ADMIN_UID = "ONrTBmCnXXOCXANkCQIkkL3h66z1";
+var statusEl = document.getElementById("status");
+var listEl = document.getElementById("list");
+
+auth.onAuthStateChanged(function (user) {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+  if (user.uid !== ADMIN_UID) {
+    statusEl.textContent = "Access denied. Admin only.";
+    return;
+  }
+  loadPending();
+});
+
+function loadPending() {
+  statusEl.textContent = "Loading...";
+  listEl.innerHTML = "";
+  db.collection("photos").where("status", "==", "pending").get()
+    .then(function (snap) {
+      if (snap.empty) {
+        statusEl.textContent = "No pending photos.";
+        return;
+      }
+      statusEl.textContent = "";
+      snap.forEach(function (doc) {
+        renderCard(doc.id, doc.data());
+      });
+    })
+    .catch(function (e) {
+      statusEl.textContent = "Error: " + e.message;
+    });
+}
+
+function renderCard(id, data) {
+  var card = document.createElement("div");
+  card.className = "card";
+
+  if (data.imageUrl) {
+    var img = document.createElement("img");
+    img.src = data.imageUrl;
+    card.appendChild(img);
+  }
+
+  var desc = document.createElement("p");
+  desc.textContent = data.description || "(no description)";
+  card.appendChild(desc);
+
+  var by = document.createElement("p");
+  by.textContent = "By: " + (data.uploaderName || "Unknown");
+  card.appendChild(by);
+
+  var approveBtn = document.createElement("button");
+  approveBtn.className = "approve";
+  approveBtn.textContent = "Approve";
+  approveBtn.onclick = function () { setStatus(id, "approved", card); };
+  card.appendChild(approveBtn);
+
+  var rejectBtn = document.createElement("button");
+  rejectBtn.className = "reject";
+  rejectBtn.textContent = "Reject";
+  rejectBtn.onclick = function () { setStatus(id, "rejected", card); };
+  card.appendChild(rejectBtn);
+
+  listEl.appendChild(card);
+}
+
+function setStatus(id, newStatus, card) {
+  db.collection("photos").doc(id).update({ status: newStatus })
+    .then(function () {
+      card.remove();
+      if (!listEl.children.length) {
+        statusEl.textContent = "No pending photos.";
+      }
+    })
+    .catch(function (e) {
+      statusEl.textContent = "Error: " + e.message;
+    });
+}
+</script>
+</body>
+</html>
