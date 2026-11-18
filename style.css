@@ -576,3 +576,10 @@ textarea {
     pointer-events: none;
   }
 }
+@media (min-width: 601px) {
+  .mcOverlay,
+  .mrOverlay,
+  .miOverlay {
+    display: none !important;
+  }
+}
