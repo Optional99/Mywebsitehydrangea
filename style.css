@@ -307,3 +307,40 @@ textarea {
   }
 }
 
+/* ---------- Popup mobile v2: bigger photo, smaller controls ---------- */
+@media (max-width: 700px) {
+  .pmOverlay { padding: 8px; }
+  .pmBox { max-height: 94vh; border-radius: 14px; }
+  .pmImgWrap { flex: none; }
+  .pmImgWrap img { width: 100%; max-height: 62vh; }
+  .pmSide { padding: 12px 14px; min-width: 0; }
+  .pmDesc { font-size: 14px; }
+  .pmBy { font-size: 12px; margin-bottom: 8px; }
+  #pmLike { padding: 4px 12px; font-size: 14px; }
+  .pmRate { margin: 8px 0; gap: 8px; }
+  .pmStar { font-size: 22px; }
+  .pmRate small { font-size: 11px; }
+  .pmSide h4 { font-size: 14px; margin: 4px 0; }
+  #pmComments { min-height: 40px; max-height: 110px; }
+  .pmComment { font-size: 13px; }
+  .pmCommentForm input { padding: 8px; font-size: 13px; }
+  .pmCommentForm button { padding: 8px 14px; font-size: 13px; }
+  .pmCloseBtn { width: 32px; height: 32px; top: 8px; right: 8px; }
+}
+/* ---------- Popup desktop v2: bigger photo, smaller controls ---------- */
+@media (min-width: 701px) {
+  .pmBox { max-width: 1200px; max-height: 92vh; }
+  .pmImgWrap { flex: 1; }
+  .pmImgWrap img { max-height: 92vh; }
+  .pmSide { flex: none; width: 300px; min-width: 0; padding: 16px; }
+  .pmDesc { font-size: 15px; }
+  .pmBy { font-size: 12px; margin-bottom: 10px; }
+  #pmLike { padding: 5px 14px; font-size: 14px; }
+  .pmRate { margin: 8px 0; gap: 8px; }
+  .pmStar { font-size: 22px; }
+  .pmRate small { font-size: 11px; }
+  .pmSide h4 { font-size: 14px; margin: 4px 0; }
+  .pmComment { font-size: 13px; }
+  .pmCommentForm input { padding: 8px; font-size: 13px; }
+  .pmCommentForm button { padding: 8px 14px; font-size: 13px; }
+}
