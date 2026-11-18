@@ -385,9 +385,7 @@ function loadGallery() {
 		          var card = document.createElement("div");
         card.className = "photoCard";
         card.style.cssText = "background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.12); overflow:hidden; cursor:pointer;";
-        card.onclick = function (e) {
-  if (e.target.closest(".postActions")) return;
-
+        img.onclick = function () {
   if (isMobile()) {
     openMobileImage(doc.id);
   } else {
