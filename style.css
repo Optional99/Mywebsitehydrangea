@@ -270,4 +270,40 @@ textarea {
     font-size: 30px;
   }
 }
+/* ---------- Mobile design v2 ---------- */
+@media (max-width: 600px) {
+  .homeHero {
+    margin: 14px auto 28px;
+    padding: 32px 18px;
+    border-radius: 18px;
+  }
+
+  .homeHero h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .homeHero p {
+    font-size: 15px;
+  }
+
+  .gallerySection h2 {
+    font-size: 22px;
+    margin: 10px 0 6px;
+  }
+
+  .gallerySection > p {
+    font-size: 14px;
+  }
+
+  .galleryGrid {
+    columns: 2;
+    column-gap: 10px;
+    margin-top: 18px;
+  }
+
+  .galleryGrid > * {
+    margin-bottom: 10px;
+  }
+}
 
