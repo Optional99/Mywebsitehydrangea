@@ -590,6 +590,26 @@ function openPhoto(id) {
     }, function (e) { pmMsg(e.message); });
 }
 
+	var previousMobileOverflow = "";
+
+function openMobileImage(id) {
+  var d = photosData[id];
+  if (!d) { return; }
+
+  previousMobileOverflow = document.body.style.overflow;
+
+  $("miImage").src = d.imageUrl;
+  $("mobileImageViewer").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeMobileImage() {
+  $("mobileImageViewer").classList.remove("open");
+  $("miImage").src = "";
+  document.body.style.overflow = previousMobileOverflow;
+}
+
+$("miClose").onclick = closeMobileImage;
 function closePhoto() {
   $("photoModal").classList.remove("open");
   document.body.style.overflow = "";
