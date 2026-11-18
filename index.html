@@ -311,16 +311,59 @@ function statText(d) {
   var a = avgOf(d);
   return "\u2665 " + (d.likesCount || 0) + "    \u2605 " + (a ? a.toFixed(1) : "-");
 }
+	var actEls = {};
+var myLikes = {};
+
+function isMobile() { return window.matchMedia("(max-width: 600px)").matches; }
+
+function paintFeedActions(id) {
+  var a = actEls[id];
+  var d = photosData[id];
+  if (!a || !d) { return; }
+  var liked = !!myLikes[id];
+  var avg = avgOf(d);
+  a.like.textContent = (liked ? "\u2665 " : "\u2661 ") + (d.likesCount || 0);
+  a.like.className = "actBtn" + (liked ? " liked" : "");
+  a.rate.textContent = "\u2605 " + (avg ? avg.toFixed(1) : "-");
+}
+
+function feedLike(id) {
+  var user = auth.currentUser;
+  if (!user) { return; }
+  var photoRef = db.collection("photos").doc(id);
+  var likeRef = photoRef.collection("likes").doc(user.uid);
+  db.runTransaction(function (t) {
+    return t.get(likeRef).then(function (likeDoc) {
+      return t.get(photoRef).then(function (pDoc) {
+        var count = pDoc.data().likesCount || 0;
+        if (likeDoc.exists) {
+          t.delete(likeRef);
+          t.update(photoRef, { likesCount: Math.max(0, count - 1) });
+          return { liked: false, count: Math.max(0, count - 1) };
+        }
+        t.set(likeRef, { createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        t.update(photoRef, { likesCount: count + 1 });
+        return { liked: true, count: count + 1 };
+      });
+    });
+  }).then(function (r) {
+    photosData[id].likesCount = r.count;
+    myLikes[id] = r.liked;
+    refreshStats(id);
+  }).catch(function (e) { console.log(e.message); });
+}
 
 function refreshStats(id) {
   var d = photosData[id];
   if (statEls[id]) { statEls[id].textContent = statText(d); }
+  paintFeedActions(id);
   if (id === currentId) {
     $("pmLikeCount").textContent = d.likesCount || 0;
     var a = avgOf(d);
     $("pmAvg").textContent = a ? a.toFixed(1) + " average (" + d.ratingCount + ")" : "No ratings yet";
   }
 }
+
 
 function loadGallery() {
   db.collection("photos").where("status", "==", "approved").limit(50).get()
@@ -396,11 +439,12 @@ function paintStars(n) {
     stars[i].className = "pmStar" + (i < n ? " on" : "");
   }
 }
-
-function paintLike() {
+	function paintLike() {
   $("pmLike").className = iLiked ? "liked" : "";
   $("pmLikeIcon").textContent = iLiked ? "\u2665" : "\u2661";
-}
+  if (currentId) { myLikes[currentId] = iLiked; paintFeedActions(currentId); }
+	}
+
 
 function buildStars() {
   var box = $("pmStars");
