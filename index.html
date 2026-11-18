@@ -625,14 +625,16 @@ function toggleLike() {
     refreshStats(id);
   }).catch(function (e) { pmMsg(e.message); });
 }
-
-function ratePhoto(n) {
+	function ratePhoto(n, targetId) {
   var user = auth.currentUser;
-  var id = currentId;
+  var id = targetId || currentId;
+
   if (!user || !id) { return; }
+
   var photoRef = db.collection("photos").doc(id);
   var ratingRef = photoRef.collection("ratings").doc(user.uid);
-  pmMsg("");
+
+  if (id === currentId) { pmMsg(""); }
 
   db.runTransaction(function (t) {
     return t.get(ratingRef).then(function (rDoc) {
@@ -641,18 +643,33 @@ function ratePhoto(n) {
         var old = rDoc.exists ? rDoc.data().value : 0;
         var sum = (p.ratingSum || 0) - old + n;
         var cnt = (p.ratingCount || 0) + (rDoc.exists ? 0 : 1);
+
         t.set(ratingRef, { value: n, uid: user.uid });
-        t.update(photoRef, { ratingSum: sum, ratingCount: cnt, averageRating: sum / cnt });
+        t.update(photoRef, {
+          ratingSum: sum,
+          ratingCount: cnt,
+          averageRating: sum / cnt
+        });
+
         return { sum: sum, cnt: cnt };
       });
     });
   }).then(function (r) {
     photosData[id].ratingSum = r.sum;
     photosData[id].ratingCount = r.cnt;
-    if (id === currentId) { myRating = n; paintStars(n); }
+
+    if (id === currentId) {
+      myRating = n;
+      paintStars(n);
+    }
+
     refreshStats(id);
-  }).catch(function (e) { pmMsg(e.message); });
-}
+  }).catch(function (e) {
+    if (id === currentId) { pmMsg(e.message); }
+    else { console.log(e.message); }
+  });
+	}
+
 
 function postComment() {
   var user = auth.currentUser;
