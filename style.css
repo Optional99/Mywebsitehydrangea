@@ -198,7 +198,8 @@ textarea {
 .pmImgWrap { flex: 1.4; min-width: 0; background: #111; display: flex; align-items: center; justify-content: center; }
 .pmImgWrap img { max-width: 100%; max-height: 90vh; object-fit: contain; display: block; }
 .pmSide { flex: 1; min-width: 260px; padding: 20px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; }
-.pmCloseBtn { position: absolute; top: 8px; right: 12px; z-index: 5; width: 34px; height: 34px; border: none; border-radius: 50%; background: rgba(255,255,255,0.9); font-size: 22px; line-height: 1; cursor: pointer; }
+.pmCloseBtn { position: absolute; top: 10px; right: 10px; z-index: 5; width: 36px; height: 36px; padding:0;  border: none; border-radius: 50%; background:#ff6719;color:#ffff; font-size: 22px; line-height: 1; cursor: pointer;display:flex; align-items:center; justify-content:center; }
+.pmCloseBtn:hover {background:#e85a10;}
 .pmDesc { margin: 0 0 4px; font-size: 16px; font-weight: bold; overflow-wrap: anywhere; padding-right: 30px; }
 .pmBy { margin: 0 0 14px; font-size: 13px; color: #777; }
 #pmLike { align-self: flex-start; padding: 8px 16px; border: 2px solid #ff6719; border-radius: 20px; background: #fff; color: #ff6719; font-size: 16px; font-weight: bold; cursor: pointer; }
