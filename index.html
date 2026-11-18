@@ -866,6 +866,24 @@ document.addEventListener("keydown", function (e) {
     sendMobileComment();
   }
 });
+	var lastScrollY = window.scrollY;
+
+window.addEventListener("scroll", function () {
+  if (!isMobile()) {
+    document.body.classList.remove("header-hidden");
+    return;
+  }
+
+  var currentScrollY = window.scrollY;
+
+  if (currentScrollY > lastScrollY && currentScrollY > 80) {
+    document.body.classList.add("header-hidden");
+  } else if (currentScrollY < lastScrollY) {
+    document.body.classList.remove("header-hidden");
+  }
+
+  lastScrollY = currentScrollY;
+}, { passive: true });
 </script>
 	<!-- MOBILE COMMENTS BOTTOM SHEET -->
 <div id="mobileComments" class="mcOverlay">
