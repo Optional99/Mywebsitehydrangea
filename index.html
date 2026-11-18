@@ -385,13 +385,7 @@ function loadGallery() {
 		          var card = document.createElement("div");
         card.className = "photoCard";
         card.style.cssText = "background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.12); overflow:hidden; cursor:pointer;";
-        img.onclick = function () {
-  if (isMobile()) {
-    openMobileImage(doc.id);
-  } else {
-    openPhoto(doc.id);
-  }
-};
+        
         var head = document.createElement("div");
         head.className = "postHead";
         var av = document.createElement("span");
@@ -408,6 +402,13 @@ function loadGallery() {
         img.src = d.imageUrl;
         img.alt = d.description || "Photo";
         img.style.cssText = "width:100%; display:block;";
+		  img.onclick = function () {
+  if (isMobile()) {
+    openMobileImage(doc.id);
+  } else {
+    openPhoto(doc.id);
+  }
+};
         card.appendChild(img);
 
         var info = document.createElement("div");
