@@ -609,7 +609,11 @@ function closeMobileImage() {
   document.body.style.overflow = previousMobileOverflow;
 }
 
-$("miClose").onclick = closeMobileImage;
+document.addEventListener("click", function (e) {
+  if (e.target.id === "miClose") {
+    closeMobileImage();
+  }
+});
 function closePhoto() {
   $("photoModal").classList.remove("open");
   document.body.style.overflow = "";
@@ -721,8 +725,11 @@ function closeMobileRating() {
   mobileRatingId = null;
 }
 
-$("mrClose").onclick = closeMobileRating;
-
+document.addEventListener("click", function (e) {
+  if (e.target.id === "mrClose") {
+    closeMobileRating();
+  }
+});
 function postComment() {
   var user = auth.currentUser;
   var id = currentId;
