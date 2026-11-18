@@ -320,11 +320,18 @@ function paintFeedActions(id) {
   var a = actEls[id];
   var d = photosData[id];
   if (!a || !d) { return; }
+
   var liked = !!myLikes[id];
   var avg = avgOf(d);
+
   a.like.textContent = (liked ? "\u2665 " : "\u2661 ") + (d.likesCount || 0);
   a.like.className = "actBtn" + (liked ? " liked" : "");
+
   a.rate.textContent = "\u2605 " + (avg ? avg.toFixed(1) : "-");
+
+  if (a.comment) {
+    a.comment.textContent = "\uD83D\uDCAC Comment";
+  }
 }
 
 function feedLike(id) {
