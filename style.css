@@ -561,4 +561,18 @@ textarea {
     justify-content: center;
   }
 }
+@media (max-width: 600px) {
+  #siteLogo,
+  #profileWrap,
+  .uploadlink {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
 
+  body.header-hidden #siteLogo,
+  body.header-hidden #profileWrap,
+  body.header-hidden .uploadlink {
+    transform: translateY(-70px);
+    opacity: 0;
+    pointer-events: none;
+  }
+}
