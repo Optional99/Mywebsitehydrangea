@@ -752,7 +752,19 @@ $("pmLike").onclick = toggleLike;
 $("pmCommentSend").onclick = postComment;
 $("pmCommentInput").onkeydown = function (e) { if (e.key === "Enter") { postComment(); } };
 $("photoModal").onclick = function (e) { if (e.target === this) { closePhoto(); } };
-document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closePhoto(); } });
+document.addEventListener("keydown", function (e) {
+  if (e.key !== "Escape") return;
+
+  if ($("mobileComments").classList.contains("open")) {
+    closeMobileComments();
+  } else if ($("mobileRating").classList.contains("open")) {
+    closeMobileRating();
+  } else if ($("mobileImageViewer").classList.contains("open")) {
+    closeMobileImage();
+  } else {
+    closePhoto();
+  }
+});
 	var mobileCommentId = null;
 var mobileUnsubComments = null;
 var mobileCommentOverflow = "";
