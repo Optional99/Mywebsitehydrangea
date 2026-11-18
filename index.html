@@ -416,6 +416,48 @@ function loadGallery() {
         stats.style.cssText = "padding:0 12px 12px; font-family:Arial,sans-serif; font-size:13px; color:#777;";
         statEls[doc.id] = stats;
         card.appendChild(stats);
+		  var actions = document.createElement("div");
+actions.className = "postActions";
+
+var likeBtn = document.createElement("button");
+likeBtn.type = "button";
+likeBtn.className = "actBtn";
+
+var rateBtn = document.createElement("button");
+rateBtn.type = "button";
+rateBtn.className = "actBtn";
+
+var commentBtn = document.createElement("button");
+commentBtn.type = "button";
+commentBtn.className = "actBtn";
+
+actEls[doc.id] = {
+  like: likeBtn,
+  rate: rateBtn,
+  comment: commentBtn
+};
+
+likeBtn.onclick = function (e) {
+  e.stopPropagation();
+  feedLike(doc.id);
+};
+
+rateBtn.onclick = function (e) {
+  e.stopPropagation();
+  openMobileRating(doc.id);
+};
+
+commentBtn.onclick = function (e) {
+  e.stopPropagation();
+  openMobileComments(doc.id);
+};
+
+actions.appendChild(likeBtn);
+actions.appendChild(rateBtn);
+actions.appendChild(commentBtn);
+card.appendChild(actions);
+
+paintFeedActions(doc.id);
         stats.textContent = statText(d);
 
         if (d.description) {
