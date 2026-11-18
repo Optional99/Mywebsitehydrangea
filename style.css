@@ -360,3 +360,13 @@ textarea {
   .postStats { padding: 10px 12px 4px !important; font-size: 16px !important; font-weight: bold; color: #262626 !important; }
   .postCaption { display: block; padding: 0 12px 12px; font-size: 14px; color: #262626; line-height: 1.4; overflow-wrap: anywhere; }
 }
+/* ---------- Feed action buttons (mobile only) ---------- */
+.postActions { display: none; }
+
+@media (max-width: 600px) {
+  .postActions { display: flex; align-items: center; gap: 20px; padding: 8px 12px 2px; }
+  .actBtn { display: flex; align-items: center; gap: 6px; padding: 4px 0; border: none; border-radius: 0; background: none; color: #262626; font-size: 20px; font-weight: bold; }
+  .actBtn:hover { background: none; }
+  .actBtn.liked { color: #ed4956; }
+  .postStats { display: none; }
+}
