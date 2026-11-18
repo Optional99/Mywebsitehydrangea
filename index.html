@@ -622,6 +622,37 @@ $("pmCommentInput").onkeydown = function (e) { if (e.key === "Enter") { postComm
 $("photoModal").onclick = function (e) { if (e.target === this) { closePhoto(); } };
 document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closePhoto(); } });
 </script>
+	<!-- MOBILE COMMENTS BOTTOM SHEET -->
+<div id="mobileComments" class="mcOverlay">
+  <div class="mcSheet">
+    <div class="mcHeader">
+      <strong>Comments</strong>
+      <button id="mcClose" type="button">&times;</button>
+    </div>
+    <div id="mcList" class="mcList"></div>
+    <div class="mcForm">
+      <input id="mcInput" type="text"
+        maxlength="300" placeholder="Add a comment...">
+      <button id="mcSend" type="button">Post</button>
+    </div>
+    <p id="mcMsg"></p>
+  </div>
+</div>
+
+<!-- MOBILE RATING POPUP -->
+<div id="mobileRating" class="mrOverlay">
+  <div class="mrBox">
+    <strong>Rate this photo</strong>
+    <div id="mrStars"></div>
+    <button id="mrClose" type="button">Cancel</button>
+  </div>
+</div>
+
+<!-- MOBILE FULLSCREEN IMAGE -->
+<div id="mobileImageViewer" class="miOverlay">
+  <button id="miClose" type="button">&times;</button>
+  <img id="miImage" alt="Full-screen photograph">
+</div>
 
 </body>
 
