@@ -332,11 +332,22 @@ function loadGallery() {
         var d = doc.data();
         if (!d.imageUrl) { return; }
         photosData[doc.id] = d;
-
-        var card = document.createElement("div");
+		          var card = document.createElement("div");
         card.className = "photoCard";
         card.style.cssText = "background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.12); overflow:hidden; cursor:pointer;";
         card.onclick = function () { openPhoto(doc.id); };
+
+        var head = document.createElement("div");
+        head.className = "postHead";
+        var av = document.createElement("span");
+        av.className = "postAvatar";
+        av.textContent = (d.uploaderName || "?").charAt(0).toUpperCase();
+        var who = document.createElement("span");
+        who.className = "postName";
+        who.textContent = d.uploaderName || "Unknown";
+        head.appendChild(av);
+        head.appendChild(who);
+        card.appendChild(head);
 
         var img = document.createElement("img");
         img.src = d.imageUrl;
@@ -345,17 +356,31 @@ function loadGallery() {
         card.appendChild(img);
 
         var info = document.createElement("div");
+        info.className = "postInfo";
         info.style.cssText = "padding:12px 12px 4px; font-family:Arial,sans-serif; font-size:14px;";
         info.textContent = (d.description || "") + (d.uploaderName ? " (by " + d.uploaderName + ")" : "");
         card.appendChild(info);
 
         var stats = document.createElement("div");
+        stats.className = "postStats";
         stats.style.cssText = "padding:0 12px 12px; font-family:Arial,sans-serif; font-size:13px; color:#777;";
         statEls[doc.id] = stats;
         card.appendChild(stats);
         stats.textContent = statText(d);
 
+        if (d.description) {
+          var cap = document.createElement("div");
+          cap.className = "postCaption";
+          var capName = document.createElement("strong");
+          capName.textContent = d.uploaderName || "";
+          cap.appendChild(capName);
+          cap.appendChild(document.createTextNode(" " + d.description));
+          card.appendChild(cap);
+        }
+
         grid.appendChild(card);
+
+        
       });
     })
     .catch(function (e) { console.log(e.message); });
