@@ -753,6 +753,108 @@ $("pmCommentSend").onclick = postComment;
 $("pmCommentInput").onkeydown = function (e) { if (e.key === "Enter") { postComment(); } };
 $("photoModal").onclick = function (e) { if (e.target === this) { closePhoto(); } };
 document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closePhoto(); } });
+	var mobileCommentId = null;
+var mobileUnsubComments = null;
+var mobileCommentOverflow = "";
+
+function openMobileComments(id) {
+  mobileCommentId = id;
+  mobileCommentOverflow = document.body.style.overflow;
+
+  $("mcList").innerHTML = "";
+  $("mcMsg").textContent = "";
+  $("mcInput").value = "";
+
+  $("mobileComments").classList.add("open");
+  document.body.style.overflow = "hidden";
+
+  if (mobileUnsubComments) mobileUnsubComments();
+
+  mobileUnsubComments = db.collection("photos")
+    .doc(id).collection("comments")
+    .orderBy("createdAt")
+    .limit(100)
+    .onSnapshot(function (snap) {
+      var list = $("mcList");
+      list.innerHTML = "";
+
+      if (snap.empty) {
+        list.textContent = "No comments yet. Be the first!";
+        return;
+      }
+
+      snap.forEach(function (c) {
+        var d = c.data();
+        var row = document.createElement("div");
+        row.className = "mcComment";
+
+        var name = document.createElement("strong");
+        name.textContent = d.name || "Anonymous";
+
+        var content = document.createElement("span");
+        content.textContent = " " + d.text;
+
+        row.appendChild(name);
+        row.appendChild(content);
+        list.appendChild(row);
+      });
+
+      list.scrollTop = list.scrollHeight;
+    }, function (e) {
+      $("mcMsg").textContent = e.message;
+    });
+}
+
+function closeMobileComments() {
+  $("mobileComments").classList.remove("open");
+
+  if (mobileUnsubComments) {
+    mobileUnsubComments();
+    mobileUnsubComments = null;
+  }
+
+  mobileCommentId = null;
+  document.body.style.overflow = mobileCommentOverflow;
+}
+
+function sendMobileComment() {
+  var user = auth.currentUser;
+  var id = mobileCommentId;
+  var comment = $("mcInput").value.trim();
+
+  if (!user || !id || !comment) {
+    $("mcMsg").textContent = "Write a comment first.";
+    return;
+  }
+
+  $("mcMsg").textContent = "";
+
+  db.collection("photos").doc(id).collection("comments").add({
+    text: comment,
+    uid: user.uid,
+    name: user.displayName || "Anonymous",
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function () {
+    $("mcInput").value = "";
+  }).catch(function (e) {
+    $("mcMsg").textContent = e.message;
+  });
+}
+
+document.addEventListener("click", function (e) {
+  if (e.target.id === "mcClose") closeMobileComments();
+  if (e.target.id === "mcSend") sendMobileComment();
+
+  if (e.target.id === "mobileComments") {
+    closeMobileComments();
+  }
+});
+
+document.addEventListener("keydown", function (e) {
+  if (e.target.id === "mcInput" && e.key === "Enter") {
+    sendMobileComment();
+  }
+});
 </script>
 	<!-- MOBILE COMMENTS BOTTOM SHEET -->
 <div id="mobileComments" class="mcOverlay">
